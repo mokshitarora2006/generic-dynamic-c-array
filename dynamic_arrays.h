@@ -18,6 +18,21 @@ typedef struct {
   } while (0)
 
 #define is_full(s) (((header(s))->size == (header(s))->capacity) ? 1 : 0)
+#define vector_print(s, id)                                                    \
+  do {                                                                         \
+    metadata *header = (metadata *)(&s) - 1;                                   \
+    if (header->size == 0) {                                                   \
+      printf("{}\n");                                                          \
+    } else {                                                                   \
+      printf("{");                                                             \
+      for (int i = 0; i < header->size - 1; i++) {                             \
+        printf(id, s[i]);                                                      \
+        printf(",");                                                           \
+      }                                                                        \
+      printf(id, s[header->size - 1]);                                         \
+      printf("}\n");                                                           \
+    }                                                                          \
+  } while (0)
 #define generate_vector(s) (vector_create(sizeof(s)))
 #define get_vector_size(s) ((header(s))->size)
 #define get_vector_capacity(s) ((header(s))->capacity)
