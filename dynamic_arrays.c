@@ -36,3 +36,13 @@ void increase_size_push_back(void **arr) {
     (*arr) = (void *)(header + 1);
   }
 }
+
+void _free_vector(void **arr) {
+  metadata *header = (metadata *)(*arr) - 1;
+  free(header);
+}
+
+void _reuse_vector(void **arr) {
+  metadata *header = (metadata *)(*arr) - 1;
+  header->size = 0;
+}

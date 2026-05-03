@@ -21,6 +21,8 @@ typedef struct {
 #define generate_vector(s) (vector_create(sizeof(s)))
 #define get_vector_size(s) ((header(s))->size)
 #define get_vector_capacity(s) ((header(s))->capacity)
+#define free_vector(s) (_free_vector(&s))
+#define reuse_vector(s) (_reuse_vector(&s))
 #define pre_allocation_vector_generation(type, num)                            \
   (vector_create_with_pre_allocation(sizeof(type), num))
 #define remove_element(arr, index)                                             \
@@ -52,3 +54,5 @@ typedef struct {
 void *vector_create(size_t el_size);
 void increase_size_push_back(void **arr);
 void *vector_create_with_pre_allocation(size_t el_size, size_t num);
+void _free_vector(void **arr);
+void _reuse_vector(void **arr);
