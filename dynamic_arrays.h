@@ -6,7 +6,8 @@ typedef struct {
   size_t size;
   size_t element_size;
 } metadata;
-#define header(s) ((metadata *)((char *)(s) - sizeof(metadata)))
+#define header(s) (get_header(&s))
+#define get_header(s) ((metadata *)(*s) - 1)
 #define push_back(arr, v)                                                      \
   do {                                                                         \
     if (is_full(arr)) {                                                        \
@@ -16,11 +17,10 @@ typedef struct {
     metadata *header = (metadata *)((char *)(arr) - sizeof(metadata));         \
     header->size++;                                                            \
   } while (0)
-
-#define is_full(s) (((header(s))->size == (header(s))->capacity) ? 1 : 0)
+#define is_full(s) ((header(s)->size == header(s)->capacity ? 1 : 0))
 #define vector_print(s, id)                                                    \
   do {                                                                         \
-    metadata *header = (metadata *)(&s) - 1;                                   \
+    metadata *header = header(s);                                              \
     if (header->size == 0) {                                                   \
       printf("{}\n");                                                          \
     } else {                                                                   \
@@ -37,7 +37,7 @@ typedef struct {
 #define get_vector_size(s) ((header(s))->size)
 #define get_vector_capacity(s) ((header(s))->capacity)
 #define free_vector(s) (_free_vector(&s))
-#define reuse_vector(s) (_reuse_vector(&s))
+#define reuse_vector(s) (_reuse_vector((void **)&s))
 #define pre_allocation_vector_generation(type, num)                            \
   (vector_create_with_pre_allocation(sizeof(type), num))
 #define remove_element(arr, index)                                             \
