@@ -6,21 +6,21 @@ typedef struct {
   size_t size;
   size_t element_size;
 } metadata;
-#define header(s) (get_header(&s))
-#define get_header(s) ((metadata *)(*s) - 1)
-#define push_back(arr, v)                                                      \
+#define _header(s) (_get_header(&s))
+#define _get_header(s) ((metadata *)(*s) - 1)
+#define vector_push_back(arr, v)                                               \
   do {                                                                         \
-    if (is_full(arr)) {                                                        \
-      increase_size_push_back((void **)&(arr));                                \
+    if (_is_full(arr)) {                                                       \
+      _increase_size_push_back((void **)&(arr));                               \
     }                                                                          \
-    (arr)[get_vector_size(arr)] = v;                                           \
+    (arr)[_get_vector_size(arr)] = v;                                          \
     metadata *header = (metadata *)((char *)(arr) - sizeof(metadata));         \
     header->size++;                                                            \
   } while (0)
-#define is_full(s) ((header(s)->size == header(s)->capacity ? 1 : 0))
+#define _is_full(s) ((_header(s)->size == _header(s)->capacity ? 1 : 0))
 #define vector_print(s, id)                                                    \
   do {                                                                         \
-    metadata *header = header(s);                                              \
+    metadata *header = _header(s);                                             \
     if (header->size == 0) {                                                   \
       printf("{}\n");                                                          \
     } else {                                                                   \
@@ -33,14 +33,14 @@ typedef struct {
       printf("}\n");                                                           \
     }                                                                          \
   } while (0)
-#define generate_vector(s) (vector_create(sizeof(s)))
-#define get_vector_size(s) ((header(s))->size)
-#define get_vector_capacity(s) ((header(s))->capacity)
-#define free_vector(s) (_free_vector(&s))
-#define reuse_vector(s) (_reuse_vector((void **)&s))
-#define pre_allocation_vector_generation(type, num)                            \
+#define _generate_vector(s) (_vector_create(sizeof(s)))
+#define _get_vector_size(s) ((_header(s))->size)
+#define _get_vector_capacity(s) ((header(s))->capacity)
+#define vector_free(s) (_free_vector(&s))
+#define vector_reuse(s) (_reuse_vector((void **)&s))
+#define _pre_allocation_vector_generation(type, num)                           \
   (vector_create_with_pre_allocation(sizeof(type), num))
-#define remove_element(arr, index)                                             \
+#define vector_delete_element(arr, index)                                      \
   do {                                                                         \
     metadata *header = (metadata *)((char *)(arr) - sizeof(metadata));         \
     if ((index) >= header->size) {                                             \
@@ -60,14 +60,14 @@ typedef struct {
         }                                                                      \
       }                                                                        \
     }                                                                          \
-    arr = (void *)(header + 1);                                                \
+    (arr) = (void *)(header + 1);                                              \
   } while (0)
 #define GET_MACRO(a, b, NAME, ...) NAME
-#define create_vector(...)                                                     \
-  GET_MACRO(__VA_ARGS__, pre_allocation_vector_generation,                     \
-            generate_vector)(__VA_ARGS__)
-void *vector_create(size_t el_size);
-void increase_size_push_back(void **arr);
+#define vector_create(...)                                                     \
+  GET_MACRO(__VA_ARGS__, _pre_allocation_vector_generation,                    \
+            _generate_vector)(__VA_ARGS__)
+void *_vector_create(size_t el_size);
+void _increase_size_push_back(void **arr);
 void *vector_create_with_pre_allocation(size_t el_size, size_t num);
 void _free_vector(void **arr);
 void _reuse_vector(void **arr);
